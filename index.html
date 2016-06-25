@@ -231,7 +231,7 @@ $(document).ready(function(){
                 debug: false,
                 detectSpeakingEvents: true,
                 autoAdjustMic: false,
-                nick: document.getElementById('peer-name').innerHTML
+                nick: "Your Nick Name"
             });
             // when it's ready, join if we got a room from the URL
             webrtc.on('readyToCall', function () {
@@ -270,7 +270,7 @@ $(document).ready(function(){
             // a peer video has been added
             webrtc.on('videoAdded', function (video, peer) {
                 console.log('video added', peer.nick);
-                alert(peer.nick);
+                
                 var remotes = document.getElementById('remotes');
                 if (remotes) {
                     var container = document.createElement('div');
