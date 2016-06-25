@@ -7,6 +7,7 @@
 	<meta charset="utf-8">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
 	<title>test</title>
+    
 	<meta name="description" content="Learn how to recreate the preloader from Cantina Negrar. Tutorial for a passionate front-end web developers by Petr Tichy.">
 
 	<!--iOS -->
@@ -15,8 +16,9 @@
 
 	<!-- Place favicon.ico and apple-touch-icon.png in the root directory -->
 
-	<link rel="stylesheet" href="css/normalize.css">
 	<link rel="stylesheet" href="css/main.css">
+    <link href="http://netdna.bootstrapcdn.com/twitter-bootstrap/2.3.2/css/bootstrap-combined.no-icons.min.css" rel="stylesheet">
+    <link href="http://netdna.bootstrapcdn.com/font-awesome/3.2.1/css/font-awesome.css" rel="stylesheet">
 	<script src="js/vendor/modernizr-2.6.2.min.js"></script>
 	<style type="text/css">
 	.back-link a {
@@ -50,6 +52,14 @@
 	#demo-content {
 		padding-top: 100px;
 	}
+
+    .disable{
+        margin-top: 10px;
+    }
+    .enable{
+        margin-top: 10px;
+    }
+    
 	</style>
 </head>
 <body class="demo">
@@ -84,18 +94,20 @@
             .videoContainer {
                 position: relative;
                 width: 200px;
-                height: 150px;
+                height: 175px;
+                margin:auto;
             }
             .videoContainer video {
                 position: absolute;
                 width: 100%;
                 height: 100%;
+
             }
             .volume {
                 position: absolute;
-                left: 15%;
+                left: 24%;
                 width: 70%;
-                bottom: 5px;
+                bottom: 15px;
                 height: 5px;
                 display: none;
             }
@@ -109,35 +121,101 @@
             #localScreenContainer {
                 display: none;
             }
+            
+            .stream-peer-info {
+                width: inherit;
+                padding: 5px;
+                position: absolute;
+                top: 0;
+                z-index: 10;
+                background: rgba(0,0,0,.5);
+                color: #fff;
+                height: 30px;
+
+            }
+            .stream-peer-info p {
+                white-space: nowrap;
+                overflow: hidden;
+                text-overflow: ellipsis;
+                color:white;
+            }
+
+            .stream-peer-info p:empty:before {
+                content: "Your Name";
+            }
+            .microphone {
+                    position: absolute;
+                    bottom: 4px;
+                    left: 3px;
+            }
+            .room-div{
+                text-align: center;
+                margin:auto;
+            }
         </style>
     </head>
     <body>
         <h1 class="logo"><span>TORO</span><span>Teamspeak 4 :)</span></h1>
         <h2>We bring you Future - TODAY!</h2>
-
+        <div class="room-div">
         <h3 id="title">Napravi Sobu</h3>
-        <form id="createRoom">
-            <input id="sessionInput"/>
-            <button disabled type="submit">Napravi sobu!</button>
+        
+        <form id="createRoom" class="form-inline">
+            <div class="form-group">
+                <input style="height:25px" id="sessionInput" type="text" class="form-control" placeholder="Room Name">
+            </div>   
+            <button style="margin-top:10px;" type="submit" class="btn btn-default btn-lg"">Start a Chat</button>
         </form>
         <p id="subTitle"></p>
         <div>
-          <button id="screenShareButton"></button>
+          <button class="btn btn-default" id="screenShareButton"></button>
           (Uskoro!)
         </div>
         <hr>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.2/jquery.min.js"></script>
+<script>
+$(document).ready(function(){
+    $(".disable").hide();
+
+    $(".enable").click(function(){
+        webrtc.mute();
+        $(".enable").hide();
+        $(".disable").show();    
+        $(".disable").css("background-color", "#e80044");
+    });
+
+     $(".disable").click(function(){
+        $(".disable").hide();
+        $(".enable").show();
+        webrtc.unmute();
+    });
+});
+
+</script>
         <div class="videoContainer">
-            <video id="localVideo" style="height: 150px;" oncontextmenu="return false;"></video>
+            <div class="stream-peer-info"><p id="peer-name" contenteditable="" title=""></p></div>
+            <video id="localVideo" style="height: 175px;" oncontextmenu="return false;"></video>
             <meter id="localVolume" class="volume" min="-45" max="-20" high="-25" low="-40"></meter>
+            <div class="microphone">
+            <a title="Toggle audio" class="button enable">
+            <i class="icon-microphone enable"></i>
+            </a>
+
+            <a title="Toggle audio" class="button disable">
+            <i class="icon-microphone-off"></i>
+            </a>
         </div>
-        <div><button onclick="webrtc.mute();">Mute</button><button onclick="webrtc.unmute();">Unmute</button></div>
+        </div>
+
+    
+        
         <div id="localScreenContainer" class="videoContainer">
         </div>
         <div id="remotes"></div>
         <hr>
         
         </div>
-        <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.0/jquery.min.js"></script>
+        <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.0/jquery.min.js"></script>
         <script src="latest-v2.js"></script>
         <script>
             // grab the room from the URL
@@ -153,7 +231,7 @@
                 debug: false,
                 detectSpeakingEvents: true,
                 autoAdjustMic: false,
-                nick: 'Jane Doe'
+                nick: document.getElementById('peer-name').innerHTML
             });
             // when it's ready, join if we got a room from the URL
             webrtc.on('readyToCall', function () {
@@ -191,8 +269,8 @@
             });
             // a peer video has been added
             webrtc.on('videoAdded', function (video, peer) {
-                console.log('video added', peer);
                 console.log('video added', peer.nick);
+                alert(peer.nick);
                 var remotes = document.getElementById('remotes');
                 if (remotes) {
                     var container = document.createElement('div');
@@ -342,3 +420,6 @@
 
 </body>
 </html>
+
+
+
